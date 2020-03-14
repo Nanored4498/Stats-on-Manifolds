@@ -94,12 +94,25 @@ On cherche alors à minimiser :
 \begin{equation}
 	E(S_0) = \sum_{i=1}^N f_i(S(t_i)) \qquad \text{avec } f_i(p, q) = D(y_i, p)
 \end{equation}
-Afin de pouvoir effectuer une descente de gradient pour trouver le paramètre $S_0$ qui minimise $E$, on s'intéresse à la variation de l'énergie $\delta E$, après une variation $\delta S_0$ des conditions initiales.
+Afin de pouvoir effectuer une descente de gradient pour trouver le paramètre $S_0$ qui minimise $E$, on s'intéresse à la variation de l'énergie $\delta E$, après une variation $\delta S_0$ des conditions initiales. A l'aide du système qui régi $S$ \eqref{eq:evol_S}, on déduit le système qui régi l'impact de la variation initiale $\delta S_0$ le long de $S$ :
+\begin{equation}
+\label{eq:evol_dS}
+\syst{lll}{
+	\dot{\delta S}(t) = d_{F(S(t))} \delta S(t) \\[1mm]
+	\delta S(0) = \delta S_0
+}
+\end{equation}
+En intégrant on obtient la variation de $S$ au temps $t$ :
+\begin{equation}
+	\label{eq:dS}
+	\delta S(t) = \exp \left( \int_0^{t} \d_{S(u)} F du \right) \delta S_0
+\end{equation}
+Ce qui nous permet alors de calculer la variation de $E$ :
 \begin{equation}
 	\label{eq:deltaEreg}
 	\delta E = \sum_{i=1}^N \d_{S(t_i)} f_i \delta S(t_i) = \sum_{i}^N \d_{S(t_i)} f_i \exp \left( \int_0^{t_i} \d_{S(u)} F du \right) \delta S_0
 \end{equation}
-Où l'expression de $\delta S(t_i)$ provient des chapitres précédents. On peut ensuite écrire le gradient de $E$ à partir de \eqref{eq:deltaEreg} :
+On peut ensuite écrire le gradient de $E$ à partir de cette équation :
 \begin{equation}
 	\nabla_{S_0} E = \sum_{i=1}^N \exp \left( \int_0^{t_i} \d_{S(u)} F^\trans du \right) \nabla_{S(t_i)} f_i
 \end{equation}
@@ -247,11 +260,11 @@ Ce qui nous permet de faire la simplification suivante :
 \end{equation}
 Sous forme d'un gradient, cela donne :
 \begin{equation}
-	\nabla_\phi H(\phi, q)(x) = \int_{\R_d} \nabla \left[ q(x)^\trans K(\cdot, \phi(y)) q(y) \right] (\phi(x)) dy
+	\nabla_\phi H(\phi, q)(x) = \int_{\R_d} \nabla_{\phi(x)} \left[ q(x)^\trans K(\cdot, \phi(y)) q(y) \right] dy
 \end{equation}
 On évalue ensuite cette expression au temps $t$ :
 \begin{equation}
-	\dot{q_t}(x) = - \nabla_\phi H(\phi_t, q_t) (x) = - \sum_{i=1}^n \delta_{\phi_t^{-1} \circ c_i(t)}(x) \sum_{j=1}^n \nabla \left[ \alpha_i(t)^\trans K(\cdot, c_j(t)) \alpha_j(t) \right] (c_i(t))
+	\dot{q_t}(x) = - \nabla_\phi H(\phi_t, q_t) (x) = - \sum_{i=1}^n \delta_{\phi_t^{-1} \circ c_i(t)}(x) \sum_{j=1}^n \nabla_{c_i(t)} \left[ \alpha_i(t)^\trans K(\cdot, c_j(t)) \alpha_j(t) \right]
 \end{equation}
 Cette dérivée est à nouveau une somme de Dirac situés aux même positions que $q_t$. $q$ reste donc bien une somme pondéré de Dirac situés à des positions constantes par rapport au temps. Comme $\phi_0 = \Id$, on en déduit la relation suivante :
 \begin{equation}
@@ -261,7 +274,7 @@ Cette dérivée est à nouveau une somme de Dirac situés aux même positions qu
 On peut réécrire l'évolution de $q_t$ en utilisant cette égalité :
 \begin{equation}
 	\syst{lll}{
-		\dot{q_t}(x) & = & \displaystyle - \sum_{i=1}^n \delta_{c_i(0)}(x) \sum_{j=1}^n \nabla \left[ \alpha_i(t)^\trans K(\cdot, c_j(t)) \alpha_j(t) \right] (c_i(t)) \\[2mm]
+		\dot{q_t}(x) & = & \displaystyle - \sum_{i=1}^n \delta_{c_i(0)}(x) \sum_{j=1}^n \nabla_{c_i(t)} \left[ \alpha_i(t)^\trans K(\cdot, c_j(t)) \alpha_j(t) \right] \\[2mm]
 		q_0(x) & = & \displaystyle \sum_{i}^n \delta_{c_i(0)}(x) \alpha_i(0)
 	}
 \end{equation}
@@ -270,7 +283,7 @@ On identifie dans l'expression de $\dot{q_t}$, la dérivée de $\alpha$. En regr
 \syst{lll}{
 	\label{eq:sys_c_a}
 	\dot{c_i}(t) & = & \displaystyle \sum_{j}^n K(c_i(t), c_j(t)) \alpha_j(t) \\
-	\dot{\alpha_i}(t) & = & \displaystyle - \sum_{j=1}^n \nabla \left[ \alpha_i(t)^\trans K(\cdot, c_j(t)) \alpha_j(t) \right] (c_i(t))
+	\dot{\alpha_i}(t) & = & \displaystyle - \sum_{j=1}^n \nabla_{c_i(t)} \left[ \alpha_i(t)^\trans K(\cdot, c_j(t)) \alpha_j(t) \right]
 }
 \end{equation}
 On peut simplifier cette expression en introduisant un noyau par blocs $\mathbb{K}$ :
@@ -285,7 +298,7 @@ Le système \eqref{eq:sys_c_a} se résume alors en :
 \begin{equation}
 \syst{lll}{
 	\dot{c}(t) & = & \mathbb{K}(c(t), c(t)) \alpha(t) \\
-	\dot{\alpha}(t) & = & - \nabla \left[ \alpha(t)^\trans \mathbb{K}(\cdot, c(t)) \alpha(t) \right] (c(t))
+	\dot{\alpha}(t) & = & - \nabla_{c(t)} \left[ \alpha(t)^\trans \mathbb{K}(\cdot, c(t)) \alpha(t) \right]
 }
 \end{equation}
 On reconnaît maintenant l'équation d'une géodésique $c(t)$ sur $\R^{dn}$ muni de la métrique $\mathbb{K}^{-1}$, avec pour moment $\alpha(t)$. Cela nous permet de considérer à nouveau l'opérateur $F$ \eqref{eq:op_F} défini dans la sous-section précédente et qui régit l'évolution de $S = (c, \alpha)$ via le système \eqref{eq:evol_S}.
@@ -377,12 +390,145 @@ On reconnaît maintenant l'équation d'une géodésique $c(t)$ sur $\R^{dn}$ mun
 \paragraph{Descente de gradient}
 Pour faire notre régression il nous faut optimiser $S_0$ et $X_0$ afin de minimiser l'énergie $E$ \eqref{eq:E_morph}. On va alors calculer le gradient de $E$. On introduit des variations de $S_0$ et $X_0$ que l'on appelle $\delta S_0$ et $\delta X_0$. Ces variations en engendrent d'autres le long de $S$ et $X$ selon le système suivant :
 \begin{equation}
+	\label{eq:evol_XS}
 	\syst{lll}{
 		\dot{\delta X}(t) & = & \partial_S G(t) \delta S(t) + \partial_X G(t) \delta X(t) \\
 		\dot{\delta S}(t) & = & d_{S(t)} F \delta S(t) \\
 		\delta S(0), \delta X(0) & = & \delta S_0, \delta X_0
 	}
 \end{equation}
-...
+L'équation \eqref{eq:dS} donnant $\delta S(t)$ tient toujours. Pour calculer la variation de $X(t)$, on introduit une fonction $h$ tel que :
+\begin{equation}
+	\label{eq:dX_with_h}
+	\delta X(t) = \exp \left( \int_0^t \partial_X G(u) du \right) h(t)
+\end{equation}
+On dérive alors cette expression pour essayer d'identifier $h$ grâce à \eqref{eq:evol_XS}.
+\begin{equation}
+	\dot{\delta X}(t) = \partial_X G(t) \delta X(t) + \exp \left( \int_0^t \partial_X G(u) du \right) h'(t)
+\end{equation}
+L'identification nous donne donc :
+\begin{equation}
+	h(t) = \exp \left( - \int_0^t \partial_X G(u) du \right) \partial_S G(t) \delta S(t)
+\end{equation}
+En intégrant avec la condition initiale $\delta X(0) = \delta X_0$, on obtient :
+\begin{equation}
+	h(t) = \delta X_0 + \int_0^t \exp \left( - \int_0^u \partial_X G(s) ds \right) \partial_S G(u) \delta S(u) du
+\end{equation}
+On remplace ensuite $h$ par son expression dans \eqref{eq:dX_with_h} :
+\begin{equation}
+	\delta X(t) = \exp \left( \int_0^t \partial_X G(u) du \right) \delta X_0 + \int_0^t \exp \left( \int_u^t \partial_X G(s) ds \right) \partial_S G(u) \delta S(u) du
+\end{equation}
+On peut remplacer $\delta S(u)$ par son expression \eqref{eq:dS} :
+\begin{equation}
+	\delta X(t) = \exp \left( \int_0^t \partial_X G(u) du \right) \delta X_0 + \int_0^t \exp \left( \int_u^t \partial_X G(s) ds \right) \partial_S G(u) \exp \left( \int_0^u d_{S(s)} F ds \right)\delta S_0 du
+\end{equation}
+On est alors dans la mesure d'écrire le gradient de $E$ par rapport à nos deux paramètres $X_0$ et $S_0$ :
+\begin{equation}
+	\syst{lll}{
+		\displaystyle \nabla_{X_0} E & = & \displaystyle \sum_{i=1}^N \left( \int_0^{t_i} \partial_	X G(u)^\trans du \right) \nabla_{X(t_i)} f_i \\
+		\displaystyle \nabla_{S_0} E & = & \displaystyle \sum_{i=1}^N \int_0^{t_i} \exp \left( \int_0^u d_{S(s)} F^\trans ds \right) \partial_S G(u)^\trans \exp \left( \int_u^{t_i} \partial_X G(s)^\trans ds \right) du \nabla_{X(t_i)} f_i
+	}
+\end{equation}
+Afin de ramener le calcul de ces gradient à des résolutions de système on commence par introduire la fonction suivante :
+\begin{equation}
+	\theta(t) = \sum_{i=1}^N \exp \left( \int_t^{t_i} \partial_X G(u)^\trans du \right) \nabla_{X(t_i)} f_i \mathbbm{1} \{ t \leqslant t_i \}
+\end{equation}
+qui vérifie $\nabla_{X_0} E = \theta(0)$. De la même manière on pose la fonction $\xi$ vérifiant $\xi(0) = \nabla_{S_0} E$ suivante :
+\begin{equation}
+	\xi(t) = \int_t^\infty \exp \left( \int_t^u d_{S(s)} F^\trans \right) \partial_S G(u)^\trans \theta(u) du
+\end{equation}
+En dérivant ces deux fonction on abouti à la proposition suivante :
 
-\subsection{Moyennes }
+\begin{proposition}
+	Le gradient de $E$ vérifie $\nabla_{X_0} E = \theta(0)$ et $\nabla_{S_0} E = \xi(0)$, où $\theta$ et $\xi$ sont solutions des systèmes~:
+	\begin{equation}
+	\syst{lll}{
+		\dot{\theta}(t) & = & - \partial_X G(t)^\trans \theta(t) - \sum_{i=1}^N \nabla_{X(t_i)} f_i \delta (t - t_i) \\[1mm]
+		\theta(T) & = & 0
+	} \qquad  \syst{lll}{
+		\dot{\xi}(t) & = & - \partial_S G(t)^\trans \theta(t) - d_{S(t)} F^\trans \xi(t) \\[1mm]
+		\xi(T) & = & 0
+	}
+	\end{equation}
+	Où $T > \sup_{i = 1}^N t_i$.
+\end{proposition}
+
+\subsection{Moyennes}
+
+On se donne un ensemble $\{ y_i \}_{i = 1, .., N}$ de points d'un variété $\M$. Dans un espace euclidien on pourrait définir une moyenne $\bar{y}$ de ces points comme le nouveau point :
+\begin{equation}
+	\bar{y}_{Euclid} = \frac{1}{N} \sum_{i=1}^N y_i
+\end{equation}
+\begin{figure}[b]
+	\centering
+	\begin{tikzpicture}[scale=2]
+		\node[blue] at (0.1, 0.2) {$\times$};
+		\node[blue] at (-0.1, 0.4) {$\times$};
+		\node[blue] at (0.6, 0.8) {$\times$};
+		\node[blue] at (0.8, 0.0) {$\times$};
+		\node[blue, right] at (0.8, 0.0) {$y_i$};
+		\node[blue] at (1.0, 0.5) {$\times$};
+		\node[blue] at (0.2, 0.6) {$\times$};
+		\node[blue] at (0.5, -0.1) {$\times$};
+		\node[red] at (0.443, 0.343) {$\bullet$};
+		\node[red, right] at (0.443, 0.343) {$\bar{y}_{Euclid}$};
+		\draw (-0.26, -0.3) rectangle (1.2, 1);
+		\node at (-0.5, -0.1) {\large $\R^d$};
+	\end{tikzpicture} \hspace{2cm}
+	\begin{tikzpicture}[scale=0.66]
+		\shade[left color=darkWhite!90, right color=whiteGray!90] 
+		(1.5,-2) to[out=15,in=170] (11.2,-1.8) node[above right] {\large $\M$} to[out=85, in=-70] (10.2,2.5) to[out=165,in=15] (1,2.2) -- cycle;
+		
+		\coordinate (y) at (6, 0.5);
+		
+		\coordinate (nu1) at (3,-0.52);
+		\coordinate (nu2) at (4.15,1.4);
+		\coordinate (nu3) at (8.7,-0.15);
+		\coordinate (nu4) at (8.9,1.55);
+		
+		\coordinate (y1) at (2.45,-0.45);
+		\coordinate (y2) at (4.2,1.8);
+		\coordinate (y3) at (9.3,-0.5);
+		\coordinate (y4) at (9.4,1.45);
+		
+		\draw[red, thick] (nu1) to[out=45, in=190] (y);
+		\draw[red, thick] (nu2) to[out=-40, in=130] (y);
+		\draw[red, thick] (nu3) to[out=130, in=-30] (y);
+		\draw[red, thick] (nu4) to[out=190, in=5] (y);
+		\draw[->, >=angle 60, greenTikz, thick] (y) -- node[below=2pt,pos=0.5] {$\alpha_{1,0}$} +({1.2*cos(190)}, {1.2*sin(190)});
+		\draw[->, >=angle 60, greenTikz, thick] (y) -- +({1.2*cos(130)}, {1.2*sin(130)}) node[right] {$\alpha_{2,0}$};
+		\draw[->, >=angle 60, greenTikz, thick] (y) -- +({1.2*cos(-30)}, {1.2*sin(-30)}) node[below] {$\alpha_{3,0}$};
+		\draw[->, >=angle 60, greenTikz, thick] (y) -- +({1.2*cos(5)}, {1.2*sin(5)}) node[right] {$\alpha_{4,0}$};
+		
+		\node[red] at (y) {$\bullet$};
+		\node[red, above right] at (y) {\large $\bar{y}$};
+		
+		\draw[greenTikz] (nu1) -- (y1);
+		\draw[greenTikz] (nu2) -- (y2);
+		\draw[greenTikz] (nu3) -- (y3);
+		\draw[greenTikz] (nu4) -- (y4);
+		\draw[purple] (nu1) node {$\bullet$} node[below] {\scriptsize $\Exp_{\bar{y}}(\alpha_{1,0})$};
+		\draw[purple] (nu2) node {$\bullet$} node[left] {\scriptsize $\Exp_{\bar{y}}(\alpha_{2,0})$};
+		\draw[purple] (nu3) node {$\bullet$} node[right] {\scriptsize $\Exp_{\bar{y}}(\alpha_{3,0})$};
+		\draw[purple] (nu4) node {$\bullet$} node[above] {\scriptsize $\Exp_{\bar{y}}(\alpha_{4,0})$};
+		\draw[blue] (y1) node {$\bullet$} node[left] {$y_1$};
+		\draw[blue] (y2) node {$\bullet$} node[above] {$y_2$};
+		\draw[blue] (y3) node {$\bullet$} node[below] {$y_3$};
+		\draw[blue] (y4) node {$\bullet$} node[right] {$y_4$};
+	\end{tikzpicture}
+	\caption{Moyenne dans un espace euclidien (à gauche) et sur une variété (à droite).}
+\end{figure}
+Or comme dans les sous-section précédentes, les opérations d'addition et de multiplication par un scalaire ne sont plus nécessairement défini sur une variété. Si on veut calculer une moyenne il va falloir utiliser d'autres opérations. Pour remédier à cela on penser à une définition équivalente de la moyenne dans les espaces euclidiens comme le point qui minimise l'énergie de Fréchet.
+\begin{equation}
+	\bar{y}_{Euclid} = \argmin_{y_0} \sum_{i=1}^N \| y_i - y_0 \|^2
+\end{equation}
+On peut alors remplacer la norme par la distance géodésique sur $\M$, ce qui nous conduit à :
+\begin{equation}
+	\label{eq:Frechet}
+	\bar{y} = \argmin_{y_0} \sum_{i=1}^N \| \Log_{y_0}(y_i) \|_{g(y_0)}^2
+\end{equation}
+Comme le $\Log$ n'est pas toujours facilement calculable et aussi pour éviter l'over-fitting, on utilise une version relaxé :
+\begin{equation}
+	\bar{y} = \argmin_{y_0} \min_{\alpha_{1,0}, ..., \alpha_{N,0}} \left[ E(y_0, \alpha_{1,0}, ..., \alpha_{N,0}) =  \sum_{i=1}^N \| \alpha_{i,0} \|_{g(y_0)}^2 + \gamma \| \Exp_{y_0}(\alpha_{i,0}) - y_i \|^2 \right]
+\end{equation}
+Où $\gamma$ est un facteur de relaxation. Lorsque $\gamma$ tend vers l'infini on retrouve la moyenne de Fréchet non relaxée \eqref{eq:Frechet}. L'existence de cette dernière moyenne à été prouvé. En revanche il n'y a généralement pas unicité. On remarquera aussi que le nombre de paramètre a fortement augmenté. Il ne nous reste plus qu'à réfléchir à l'optimisation.
