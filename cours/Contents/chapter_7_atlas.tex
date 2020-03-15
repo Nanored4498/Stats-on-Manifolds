@@ -75,14 +75,14 @@ Cette fonction de distance $D$ pourrait être la distance géodésique, mais ell
 $$ \text{exemple :} \quad D(x, y) = \| x - y \|^2 $$
 On utilise ensuite un formalisme vu dans les chapitres précédents. On pose :
 \begin{equation}
-	S(t) = \pm{p(t) \\[1mm]\ q(t)} \qquad \text{avec } \syst{lll}{p(0) & = & p_0 \\[1mm] q(0) & = & g_{p_0} v_0}
+	S(t) = \pm{p(t) \\[1mm]\ q(t)} \qquad \text{avec } \syst{lll}{p(0) & = & p_0 \\[1mm] q(0) & = & G_{p_0} v_0}
 \end{equation}
-Puis on considère l'opérateur $F$ qui contrôle l'évolution de $S$ :
+Puis on considère l'opérateur $F$, à partir de l'Hamiltonien $H$ \defref{def:Hamiltonien}, qui contrôle l'évolution de $S$ :
 \begin{equation}
 	\label{eq:op_F}
-	F = \pm{\partial_q H \\[1mm] - \partial_p H} \qquad \text{avec } H(p, q) = \frac{1}{2} q^\trans g_p^{-1} q
+	F = \pm{\partial_q H \\[1mm] - \partial_p H} \qquad \text{avec } H(p, q) = \frac{1}{2} g_p^*(q, q)
 \end{equation}
-De sorte à avoir l'équation Hamiltonienne des géodésiques formulée via :
+De sorte à avoir l'équation Hamiltonienne des géodésiques \propref{prop:Hamilton} formulée via :
 \begin{equation}
 	\label{eq:evol_S}
 	\syst{lll}{
@@ -123,6 +123,7 @@ Afin de transformer le calcul de ce gradient en la résolution d'un système, on
 On remarque alors l'égalité $\nabla_{S_0} E = \nu(0)$. Puis en dérivante cette fonction on aboutit à la proposition suivante.
 
 \begin{proposition}
+	\label{def:gradE1}
 	Le gradient de $E$ est la solution à $t=0$ du système :
 	\begin{equation}
 		\syst{lll}{
@@ -215,23 +216,23 @@ On peut va essayer d'identifier la métrique et l'Hamiltonien du système. Pour 
 	\label{eq:norm_v}
 	\| v_t \|_V^2 = \sum_{i=1}^n \sum_{j=1}^n \alpha_i(t)^\trans K(c_i(t), c_j(t)) \alpha_j(t)
 \end{equation}
-On note ensuite $q_t$ le moment de $\phi$ au temps $t$ et $g_{\phi_t}$ la métrique de notre variété à la position $\phi_t$. Notre Hamiltonien s'écrit alors :
+On note ensuite $q_t$ le moment de $\phi$ au temps $t$ et $G_{\phi_t}$ la métrique de notre variété à la position $\phi_t$. Notre Hamiltonien s'écrit alors :
 \begin{equation}
 	\label{eq:H_diff}
-	H(\phi, q) = \frac{1}{2} \sp{q}{g_\phi^{-1}(q)} = \frac{1}{2} \int_{\R_d} q(x)^\trans g_\phi^{-1}(q)(x) dx
+	H(\phi, q) = \frac{1}{2} \sp{q}{g_\phi^{-1}(q)} = \frac{1}{2} \int_{\R^d} q(x)^\trans \left( G_\phi^{-1} q \right)(x) dx
 \end{equation}
 On sait aussi que la vitesse de $\phi_t$ s'exprime en fonction de $q$ via l'équation :
 \begin{equation}
-	\frac{\partial \phi_t}{\partial t} = g_{\phi_t}^{-1}(q)
+	\frac{\partial \phi_t}{\partial t} = G_{\phi_t}^{-1} q
 \end{equation}
 En reprenant l'évolution de $\phi_t$ donné dans l'équation \eqref{eq:evol_phi}, on abouti à l'égalité suivante :
 \begin{equation}
 	\label{eq:inv_g_q}
-	g_{\phi_t}^{-1}(q_t)(x) = v_t \circ \phi_t(x) = \sum_{i=1}^n K(\phi_t(x), c_i(t)) \alpha_i(t)
+\left( G_\phi^{-1} q_t \right)(x) = v_t \circ \phi_t(x) = \sum_{i=1}^n K(\phi_t(x), c_i(t)) \alpha_i(t)
 \end{equation}
 On utilise alors cette expression dans l'équation de $H$ \eqref{eq:H_diff} qui doit être égale au carré de la norme de la vitesse exprimé dans l'équation \eqref{eq:norm_v} :
 \begin{equation}
-	\int_{\R_d} q_t(x)^\trans \sum_{i=1}^n K(\phi_t(x), c_i(t)) \alpha_i(t) dx = \sum_{i=1}^n \sum_{j=1}^n \alpha_i(t)^\trans K(c_i(t), c_j(t)) \alpha_j(t)
+	\int_{\R^d} q_t(x)^\trans \sum_{i=1}^n K(\phi_t(x), c_i(t)) \alpha_i(t) dx = \sum_{i=1}^n \sum_{j=1}^n \alpha_i(t)^\trans K(c_i(t), c_j(t)) \alpha_j(t)
 \end{equation}
 Cela nous permet de faire l'identification de $q_t$ :
 \begin{equation}
@@ -240,15 +241,15 @@ Cela nous permet de faire l'identification de $q_t$ :
 \end{equation}
 En utilisant cette expression dans l'équation \eqref{eq:inv_g_q}, on obtient une métrique possible, qui est :
 \begin{equation}
-	g_\phi^{-1}(q)(x) = \int_{\R_d} K(\phi(x), \phi(y)) q(y) dy
+	\left( G_\phi^{-1} q \right)(x) = \int_{\R^d} K(\phi(x), \phi(y)) q(y) dy
 \end{equation}
-Pour connaître l'évolution de $q_t$ il va nous falloir calculer la dérivée partielle de $H$ par rapport à $\phi$. Puis il faudra vérifier que cette évolution est consistante avec l'expression que l'on a de $q$ au cours du temps \eqref{eq:q_t}. On commence par reformuler $H$ \eqref{eq:H_diff} à l'aide de notre expression de $g^{-1}$ :
+Pour connaître l'évolution de $q_t$ il va nous falloir calculer la dérivée partielle de $H$ par rapport à $\phi$. Puis il faudra vérifier que cette évolution est consistante avec l'expression que l'on a de $q$ au cours du temps \eqref{eq:q_t}. On commence par reformuler $H$ \eqref{eq:H_diff} à l'aide de notre expression de $G^{-1}$ :
 \begin{equation}
-	H(\phi, q) = \frac{1}{2} \int_{\R_d} \int_{\R_d} q(x)^\trans K(\phi(x), \phi(y)) q(y) dx dy
+	H(\phi, q) = \frac{1}{2} \int_{\R^d} \int_{\R^d} q(x)^\trans K(\phi(x), \phi(y)) q(y) dx dy
 \end{equation}
 Calculons ensuite cette dérivée partielles :
 \begin{equation}
-	\partial_\phi H \delta \phi = \frac{1}{2} \int_{\R_d} \int_{\R_d} q(x)^\trans \left[ \partial_1 K(\phi(x), \phi(y)) \delta \phi(x) + \partial_2 K(\phi(x), \phi(y)) \delta \phi(y) \right] q(y) dx dy
+	\partial_\phi H \delta \phi = \frac{1}{2} \int_{\R^d} \int_{\R^d} q(x)^\trans \left[ \partial_1 K(\phi(x), \phi(y)) \delta \phi(x) + \partial_2 K(\phi(x), \phi(y)) \delta \phi(y) \right] q(y) dx dy
 \end{equation}
 Puis par symétrie du noyau $K$ on a la relation :
 \begin{equation}
@@ -256,11 +257,11 @@ Puis par symétrie du noyau $K$ on a la relation :
 \end{equation}
 Ce qui nous permet de faire la simplification suivante :
 \begin{equation}
-	\partial_\phi H \cdot \delta \phi = \int_{\R_d} \int_{\R_d} q(x)^\trans \left[ \partial_1 K(\phi(x), \phi(y)) \delta \phi(x) \right] q(y) dx dy
+	\partial_\phi H \cdot \delta \phi = \int_{\R^d} \int_{\R^d} q(x)^\trans \left[ \partial_1 K(\phi(x), \phi(y)) \delta \phi(x) \right] q(y) dx dy
 \end{equation}
 Sous forme d'un gradient, cela donne :
 \begin{equation}
-	\nabla_\phi H(\phi, q)(x) = \int_{\R_d} \nabla_{\phi(x)} \left[ q(x)^\trans K(\cdot, \phi(y)) q(y) \right] dy
+	\nabla_\phi H(\phi, q)(x) = \int_{\R^d} \nabla_{\phi(x)} \left[ q(x)^\trans K(\cdot, \phi(y)) q(y) \right] dy
 \end{equation}
 On évalue ensuite cette expression au temps $t$ :
 \begin{equation}
@@ -307,7 +308,7 @@ On reconnaît maintenant l'équation d'une géodésique $c(t)$ sur $\R^{dn}$ mun
 	\centering
 	\begin{tikzpicture}[scale=0.45]
 	\shade[left color=darkWhite!90, right color=whiteGray!90] 
-	(1.5,-2) to[out=15,in=170] node[below, align=center] {métrique : $\mathbb{K}^{-1}$,\\$c$ géodésique}
+	(1.5,-2) to[out=15,in=170] node[below, align=center] {cométrique : $\mathbb{K}$,\\$c$ géodésique}
 	(10.2,-1.8) node[right] {\large $\R^{dn}$} to[out=85, in=-70] coordinate[pos=0.5] (man_right)
 	(9.2,2.5) to[out=165,in=15]
 	(1,2.2) -- cycle;
@@ -440,6 +441,7 @@ qui vérifie $\nabla_{X_0} E = \theta(0)$. De la même manière on pose la fonct
 En dérivant ces deux fonction on abouti à la proposition suivante :
 
 \begin{proposition}
+	\label{prop:gradE2}
 	Le gradient de $E$ vérifie $\nabla_{X_0} E = \theta(0)$ et $\nabla_{S_0} E = \xi(0)$, où $\theta$ et $\xi$ sont solutions des systèmes~:
 	\begin{equation}
 	\syst{lll}{
@@ -453,7 +455,9 @@ En dérivant ces deux fonction on abouti à la proposition suivante :
 	Où $T > \sup_{i = 1}^N t_i$.
 \end{proposition}
 
-\subsection{Moyennes}
+\section{Moyennes}
+
+\subsection{Approche géométrique}
 
 On se donne un ensemble $\{ y_i \}_{i = 1, .., N}$ de points d'un variété $\M$. Dans un espace euclidien on pourrait définir une moyenne $\bar{y}$ de ces points comme le nouveau point :
 \begin{equation}
@@ -527,8 +531,96 @@ On peut alors remplacer la norme par la distance géodésique sur $\M$, ce qui n
 	\label{eq:Frechet}
 	\bar{y} = \argmin_{y_0} \sum_{i=1}^N \| \Log_{y_0}(y_i) \|_{g(y_0)}^2
 \end{equation}
-Comme le $\Log$ n'est pas toujours facilement calculable et aussi pour éviter l'over-fitting, on utilise une version relaxé :
+Comme le $\Log$ n'est pas toujours facilement calculable et aussi pour éviter l'over-fitting, on utilise une version relaxé, qui introduit des vecteurs vitesse $\alpha_{i,0}$ dans le plan tangent à $y_0$, $T_{y_0} \M$ :
 \begin{equation}
+	\label{eq:Frechet_relax}
 	\bar{y} = \argmin_{y_0} \min_{\alpha_{1,0}, ..., \alpha_{N,0}} \left[ E(y_0, \alpha_{1,0}, ..., \alpha_{N,0}) =  \sum_{i=1}^N \| \alpha_{i,0} \|_{g(y_0)}^2 + \gamma \| \Exp_{y_0}(\alpha_{i,0}) - y_i \|^2 \right]
 \end{equation}
-Où $\gamma$ est un facteur de relaxation. Lorsque $\gamma$ tend vers l'infini on retrouve la moyenne de Fréchet non relaxée \eqref{eq:Frechet}. L'existence de cette dernière moyenne à été prouvé. En revanche il n'y a généralement pas unicité. On remarquera aussi que le nombre de paramètre a fortement augmenté. Il ne nous reste plus qu'à réfléchir à l'optimisation.
+Où $\gamma$ est un facteur de relaxation et la norme utilisé dans le terme de relaxation est la norme euclidienne de l'espace dans lequel est plongé notre variété $\M$. Lorsque $\gamma$ tend vers l'infini on retrouve la moyenne de Fréchet non relaxée \eqref{eq:Frechet}. L'existence de cette dernière moyenne à été prouvé. En revanche il n'y a généralement pas unicité. On remarquera aussi que le nombre de paramètre a fortement augmenté. Il ne nous reste plus qu'à réfléchir à l'optimisation pour trouver ces $N+1$ paramètres.
+
+\paragraph{Optimisation}
+Similairement à ce qui a pu être fait plus tôt, en considérant les moments $q_{i,0} = g_{y_0}(\alpha_{i,0})$, on pose :
+\begin{equation}
+	S_{i,0} = \pm{y_0 \\ q_{i,0}} \qquad \syst{lll}{
+		\dot{S}_i(t) = F(S_i(t)) \\
+		S_i(0) = S_{i,0}
+	}
+\end{equation}
+Notre énergie de Fréchet relaxée \eqref{eq:Frechet_relax} se réécrit :
+\begin{equation}
+	\label{eq:Frechet_relaxS}
+	E(y_0, q_{1,0}, ..., q_{N,0}) =  \sum_{i=1}^N q_{i,0}^\trans G_{y_0} q_{i,0} + \gamma f_i \left( S_i(1) \right) \qquad \text{avec } \; f_i(p, q) = \| p - y_i \|^2
+\end{equation}
+Avec \propref{def:gradE1}, on a déjà que :
+\begin{equation}
+	\nabla_{S_{i,0}} f_i(S_i(1)) = \nu_i(0) \qquad \text{avec } \; \syst{lll}{
+		\dot{\nu_i}(t) & = & - d_{S_i(t)} F^\trans \nu_i(t) \\[1mm]
+		\nu_i(1) & = & \nabla_{S_i(1)} f_i
+	}
+\end{equation}
+Ce qui nous conduit alors à :
+\begin{equation}
+	\syst{lll}{
+		\nabla_{q_{i,0}} E & = & \displaystyle 2 G_{y_0} q_{i,0} + \gamma \nu_i^q(0) \\[1mm]
+		\nabla_{y_0} E & = & \displaystyle \sum_{i=1}^N \nabla_{y_0} \left[ q_{i,0}^\trans G_{y_0} q_{i,0} \right] + \gamma \nu_i^y(0)
+	}
+\end{equation}
+
+\begin{remarque}
+	Des calculs similaires en utilisant \propref{prop:gradE2} peuvent être effectués pour trouver le gradient de $E$ dans le cas d'une variété morphométrique. Ces calculs sont laissés en exercice.
+\end{remarque}
+
+\subsection{Approche statistique}
+Dans l'approche précédente on possède un hyper-paramètre $\gamma$ qui a une importance conséquente sur la moyenne obtenue. Mais il est difficile de trouver un moyen de l'ajuster correctement. Cela nous amène à envisager une approche statistique avec un point de vu Bayésien pour apprendre ce paramètre à l'aide d'un à priori. On définit alors le modèle hiérarchique suivant :
+\begin{equation}
+	y_i = \Exp_{y_0}(\alpha_{i,0}) + \epsilon_i \qquad \text{avec } \syst{cll}{
+		\alpha_{i,0} & \sim & \displaystyle \mathcal{N}(0, \Gamma) \\[2pt]
+		\epsilon_i & \sim & \displaystyle \mathcal{N}(0, \sigma_\epsilon^2 I_d)
+	}
+\end{equation}
+$y_0$ est un effet fixe de population. Il sera à optimiser, puisque qu'il représente la moyenne que l'on cherche. Les $\alpha_{i,0}$ sont toujours les vitesses initiales des géodésiques partant de $y_0$ et allant vers les $y_i$. Ce sont des effets aléatoires individuels, des variables latentes de notre modèle. Les $\epsilon_i$ représentent un bruit/une erreur entre les points d'arrivés des géodésiques et les valeurs $y_i$ observés. Ce modèle est aussi paramétré par une matrice de covariance $\Gamma$ et une variance de bruit $\sigma_\epsilon$.
+\begin{figure}[t]
+	\centering
+	\begin{tikzpicture}[every node/.style={minimum size=0.75cm}]
+		\node[draw, circle, fill=whiteGray] (yi) at (0, 0) {$y_i$};
+		\node[draw, circle] (ai) at (1.5, 0) {$\alpha_{i,0}$};
+		\coordinate (G) at (2.5, 0);
+		\node[] at (G) {$\bullet$};
+		\node[right] at (G) {$\Gamma$};
+		\coordinate (s) at (-1, 0);
+		\node[] at (s) {$\bullet$};
+		\node[left] at (s) {$\sigma_\epsilon$};
+		\coordinate (y) at (0, 1);
+		\node[] at (y) {$\bullet$};
+		\node[right] at (y) {$y_0$};
+		
+		\draw[->, thick] (s) -- (yi);
+		\draw[->, thick] (y) -- (yi);
+		\draw[->, thick] (G) -- (ai);
+		\draw[->, thick] (ai) -- (yi);
+	\end{tikzpicture}
+	\caption{Modèle graphique de l'approche statistique.}
+\end{figure}
+Il s'agit alors de maximiser la vraisemblance des données observées. Calculons alors cette dernière.
+\begin{equation}
+	L(y_1, ..., y_N) = \int_{\R^{Nd}} p \left( y_1, ..., y_N \mid \alpha_{1,0}, ... \alpha_{N,0} \right) p \left( \alpha_{1,0}, ... \alpha_{N,0} \right) d \alpha_{1,0} ... d \alpha_{N,0}
+\end{equation}
+En utilisant l'indépendance entre les $\alpha_{i,0}$, on obtient :
+\begin{equation}
+	\begin{array}{lll}
+	L(y_1, ..., y_N)
+	& = & \displaystyle \prod_{i=1}^N \int_{\R^d} p \left( y_i \mid \alpha_{i,0} \right) p \left( \alpha_{i,0} \right) d \alpha_{i,0} \\
+	& \propto & \displaystyle \prod_{i=1}^N \int_{\R^d} \frac{1}{\sigma} \exp \left( - \frac{1}{2 \sigma_\epsilon^2} \left\| y_i - \Exp_{y_0}(\alpha_{i,0}) \right\|^2 \right) \sqrt{|\Gamma^{-1}|} \exp \left( - \frac{1}{2} \alpha_{i,0}^\trans \Gamma^{-1} \alpha_{i,0} \right) d \alpha_{i,0}
+	\end{array}
+\end{equation}
+L'intégrale qui apparaît permet de régulariser les vitesses $\alpha_{i,0}$, mais elle rend aussi les calculs plus compliqués. On pourra avoir recours à des algorithmes MCMC-SAEM pour pourvoir trouver les paramètres optimaux. S'il n'y avait pas cette intégrale, c'est à dire que l'on fixait les $\alpha_{i,0}$, alors on aurait, après passage au $\log$ :
+\begin{equation}
+	\bar{y} = \argmin_{y_0} \min_{\sigma_\epsilon, \Gamma \atop \alpha_{1,0}, ... \alpha_{N,0}} \sum_{i=1}^N \log \sigma_\epsilon + \frac{1}{2 \sigma_\epsilon^2} \left\| y_i - \Exp_{y_0}(\alpha_{i,0}) \right\|^2 - \frac{1}{2} \log |\Gamma^{-1}| + \frac{1}{2} \alpha_{i,0}^\trans \Gamma^{-1} \alpha_{i,0}
+\end{equation}
+La fonction que l'on minimise est convexe en $\sigma^{-1}$ et $\Gamma^{-1}$ et est donc minimal lorsque le gradient selon ces deux variables s'annule, c'est à dire lorsque :
+\begin{equation}
+	\syst{lll}{
+		\sigma_\epsilon^2 & = & \displaystyle \frac{1}{N} \sum_{i=1}^N \left\| y_i - \Exp_{y_0}(\alpha_{i,0}) \right\|^2 \\
+		\Gamma & = & \displaystyle \frac{1}{N} \sum_{i=1}^N \alpha_{i,0} \alpha_{i,0}^\trans
+	}
+\end{equation}
