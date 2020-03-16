@@ -1,5 +1,10 @@
 import torch
-from time import time
+import pylab as pl
+
+pl.rcParams['figure.subplot.left'] = 0
+pl.rcParams['figure.subplot.right'] = 1
+pl.rcParams['figure.subplot.bottom'] = 0
+pl.rcParams['figure.subplot.top'] = 1
 
 def Riemannian_exponential(p, q, invG, n_points=50):
 	if not p.requires_grad: p = p.clone().requires_grad_(True)

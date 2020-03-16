@@ -1,11 +1,5 @@
-import torch
-import pylab as pl
+from time import time
 from utils import *
-
-pl.rcParams['figure.subplot.left'] = 0
-pl.rcParams['figure.subplot.right'] = 1
-pl.rcParams['figure.subplot.bottom'] = 0
-pl.rcParams['figure.subplot.top'] = 1
 
 X0 = [(-0.842741935483871, -0.6417748917748918), (-0.846774193548387, -0.3441558441558441), (-0.7701612903225806, 0.07792207792207795), (-0.6653225806451613, 0.06168831168831179), (-0.7177419354838709, -0.33333333333333326), (-0.7298387096774193, -0.6201298701298702)]
 ys = [

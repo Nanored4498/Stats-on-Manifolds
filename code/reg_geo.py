@@ -1,6 +1,5 @@
-import torch
-import pylab as pl
 from mpl_toolkits.mplot3d import Axes3D
+from time import time
 from utils import *
 
 def f(x, y):
@@ -32,8 +31,6 @@ p = torch.tensor([0.4, 2.6])
 q = torch.tensor([1.3, -3.4])
 ps, _ = Riemannian_exponential(p, q, inverse_metric, 10*n)
 ps = ps.detach()
-# z = f(ps[:,0], ps[:,1])
-# ax.plot(ps[:,0], ps[:,1], z, color='r', linewidth=3)
 
 # Noised observed points
 k = torch.randint(5, 16, (n,)).cumsum(0)
@@ -64,9 +61,9 @@ for i in range(n_steps):
 	optimizer.zero_grad()
 	loss = loss_fun(p0, q0)
 	loss.backward(retain_graph=True)
-	print(f"[{i}] Loss: {loss.detach()} \tp: {p0.detach()} \tq: {q0.detach()}t", end=" \t")
+	print(f"[{i}] Loss: {loss.detach()} \tp: {p0.detach()} \tq: {q0.detach()}", end=" \t")
 	optimizer.step()
-	print(f"time: {time() - ti}")
+	print(f"time: {time() - ti}s")
 	
 ps = Riemannian_exponential(p0, q0, inverse_metric, 100)[0].detach()
 z = f(ps[:,0], ps[:,1])
