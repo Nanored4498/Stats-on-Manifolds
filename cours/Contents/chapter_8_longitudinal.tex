@@ -1,0 +1,56 @@
+\chapter{Modèles à effets mixtes pour données longitudinales}
+\label{chap:longitudinal}
+
+\section{Modèle}
+
+\begin{figure}[b]
+	\centering
+	\begin{tikzpicture}
+		\draw[->] (-0.1, 0) -- (6, 0) node[right] {$t$};
+		\draw[->] (0, -0.1) -- (0, 2.6) node[left] {$y$};
+		
+		\node[blue] at (0.5, 1.2) {$\times$};
+		\node[blue] at (1.3, 1.7) {$\times$};
+		\node[blue] at (2.1, 2.15) {$\times$};
+		\draw[orange] (-0.2, 0.8) -- (2.7, 2.5) node[right] {$\gamma_1$};
+		\node[blue] at (1.6, 0.8) {$\times$};
+		\node[blue] at (2.25, 1.25) {$\times$};
+		\node[blue] at (3, 1.9) {$\times$};
+		\draw[orange] (0.4, -0.1) -- (3.8, 2.5) node[right] {$\gamma_2$};
+		\node[blue] at (2.8, 0.6) {$\times$};
+		\node[blue] at (3.7, 0.9) {$\times$};
+		\node[blue] at (4.1, 1.6) {$\times$};
+		\draw[orange] (2.15, -0.1) -- (5.4, 2.5) node[right] {$\gamma_3$};
+		\node[blue] at (3.9, 0.3) {$\times$};
+		\node[blue] at (5, 1) {$\times$};
+		\draw[orange] (3.27, -0.1) -- (5.8, 1.51) node[right] {$\gamma_4$};
+		\draw[red, thick] (1, -0.1) -- (4.8, 2.5) node[right] {$\gamma_0$};
+		
+		\draw[greenTikz, dotted] (-0.2, 2.15) -- (5.8, 0.3) node[right] {\small regression sur toutes les données};
+	\end{tikzpicture}
+	\caption{Régression dans un modèle longitudinale.}
+\end{figure}
+
+Dans un modèle longitudinale, on a plusieurs sujets au nombre de $N$. Pour chaque sujet $i \in \{ 1, ..., N \}$, on observe $N_i$ données $\{ y_{i,j} \}_{1 \leqslant j \leqslant N_i}$ à des temps $\{ t_{i,j} \}_{1 \leqslant j \leqslant N_i}$. Au lieu de faire une régression comme vu dans le chapitre précédent (\ref{sec:Regression}) sur toutes les données d'un coup on peut faire une régression sur chaque sujet :
+\begin{equation}
+	\cancel{y_{i,j} = a t_{i,j} + b + \epsilon_{i,j}} \qquad y_{i,j} = a_i t_{i,j} + b_i + \epsilon_{i,j}
+\end{equation}
+On suppose de plus que les paramètres de notre régression sont distribués selon des gaussiennes :
+\begin{equation}
+	a_i \sim \mathcal{N}(a, \sigma_a^2) \qquad b_i \sim \mathcal{N}(b, \sigma_b^2) \qquad \epsilon_{i,j} \sim \mathcal{N}(0, \sigma_\epsilon^2)
+\end{equation}
+On introduit de nouvelles variables $\tilde{a}_i$ et $\tilde{b}_i$ défini par :
+\begin{equation}
+	\tilde{a}_i = a_i - a \qquad \tilde{b}_i = b_i - b
+\end{equation}
+Ce qui nous permet ensuite de définir une trajectoire moyenne $\gamma_0$ ainsi que des trajectoires $\gamma_i$ pour chaque sujet $i$ par :
+\begin{equation}
+	\gamma_0(t) = at + b \qquad \text{et} \qquad \gamma_i(t) = \gamma_0(t) + \tilde{a}_it + \tilde{b}_i
+\end{equation}
+Dans le cas d'une variété on prendre à nouveau pour $\gamma_0$ une géodésique partant de $p_0$ avec une vitesse $v_0$ :
+\begin{equation}
+	\gamma_0(t) = \Exp_{p_0}(t v_0)
+\end{equation}
+Mais $\gamma_i$ est défini comme une somme de la trajectoire moyenne $\gamma_0$ et d'une autre petite trajectoire. Il n'existe pas d'équivalent immédiat sur les variétés. Comme on s'attend à ce que les trajectoires des différents sujets soient en quelque sorte parallèles, on peut vouloir définir une manière de construire des géodésiques parallèles sur une variété, pour obtenir des trajectoires $\gamma_i$ en effectuant des translations de géodésiques parallèlement à $\gamma_0$.
+
+\section{Exp-parallélisation}
