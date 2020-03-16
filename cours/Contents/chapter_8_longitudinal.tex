@@ -1,7 +1,13 @@
+\chapauthor{Yoann Coudert--Osmont}
+
+\motto{
+	Ce chapitre a pour but de définir un modèle pour les données longitudinales vivant sur une variété.
+}
+
 \chapter{Modèles à effets mixtes pour données longitudinales}
 \label{chap:longitudinal}
 
-\section{Modèle}
+\section{Données longitudinales}
 
 \begin{figure}[b]
 	\centering
@@ -51,6 +57,158 @@ Dans le cas d'une variété on prendre à nouveau pour $\gamma_0$ une géodésiq
 \begin{equation}
 	\gamma_0(t) = \Exp_{p_0}(t v_0)
 \end{equation}
-Mais $\gamma_i$ est défini comme une somme de la trajectoire moyenne $\gamma_0$ et d'une autre petite trajectoire. Il n'existe pas d'équivalent immédiat sur les variétés. Comme on s'attend à ce que les trajectoires des différents sujets soient en quelque sorte parallèles, on peut vouloir définir une manière de construire des géodésiques parallèles sur une variété, pour obtenir des trajectoires $\gamma_i$ en effectuant des translations de géodésiques parallèlement à $\gamma_0$.
+Mais $\gamma_i$ est défini comme une somme de la trajectoire moyenne $\gamma_0$ et d'une autre petite trajectoire. Il n'existe pas d'équivalent immédiat sur les variétés. Comme on s'attend à ce que les trajectoires des différents sujets soient en quelque sorte parallèles, on peut vouloir définir une manière de construire des géodésiques parallèles sur une variété, pour obtenir des trajectoires $\gamma_i$ en effectuant des translations de géodésiques parallèlement à $\gamma_0$. On va donc avoir besoin de définir des opérateurs $T_i$ sur les trajectoires tels que :
+\begin{equation}
+	\gamma_i(t) = T_i(\gamma_0)(t)
+\end{equation}
+On voudra aussi que notre opérateur $T$ soit compatible avec les distorsions temporelles. C'est à dire que pour $\psi : \R \rightarrow \R$, $\mathcal{C}^1$ croissante on a l'égalité :
+\begin{equation}
+	T(\gamma_0 \circ \psi) = T(\gamma_0) \circ \psi
+\end{equation} 
 
-\section{Exp-parallélisation}
+\section{Exp-parallélisation, Modèle à effets mixtes}
+
+\subsection{Exp-parallélisation}
+
+\begin{definition}[Exp-parallélisation]
+	Soit $\gamma_0 : I \subset \R \rightarrow \M$ une courbe différentiable sur $\M$ une variété différentiable géodésiquement complète. Pour $t_0 \in I$ et $w \in T_{\gamma_0(t_0)} \M$, l'Exp-parallèle à $\gamma_0$ dans la direction $w$ est la courbe :
+	\begin{equation}
+		\eta_{\gamma_0}^{t_0, w}(t) = \Exp_{\gamma_0(t)} \left( P_{\gamma_0}^{t_0, t}(w) \right)
+	\end{equation}
+	Où $P_{\gamma_0}^{t_0, t}(w)$ est le transport parallèle de $w$ le long de $\gamma_0$ de $t_0$ à $t$. C'est à dire la solution de :
+	\begin{equation}
+		\syst{lll}{
+			\nabla_{\dot{\gamma}_0} P_{\gamma_0}^{t_0, t}(w) = 0 \\[2mm]
+			P_{\gamma_0}^{t_0, t_0}(w) = w
+		}
+	\end{equation}
+\end{definition}
+
+\begin{proposition}
+	Soit $\gamma_0 : I \rightarrow \M$ une courbe différentiable sur $\M$, $t_0 \in I$ et $w \in T_{\gamma_0(t_0)} \M$. Alors $\eta_{\gamma_0}^{t_0, w}$ est une courbe différentiable et :
+	\begin{description}
+		\item[$\bullet$] $\displaystyle \eta_{\gamma_0}^{t_0, w} = \eta_{\gamma_0}^{t_0', P_{\gamma_0}^{t_0, t_0'}(w)}$ \quad Cette opération est intrinsèque
+		\item[$\bullet$] Si $\psi$ est une fonction strictement croissante de $\R$ tel que $I \subset \psi(\R)$ alors $\displaystyle \eta_{\gamma_0 \circ \psi}^{\psi^{-1}(t_0), w} = \eta_{\gamma_0}^{t_0, w} \circ \psi$. \quad Cette opération est compatible aux distorsions temporelles.
+	\end{description}
+\end{proposition}
+
+\begin{figure}[b]
+\centering
+\begin{tikzpicture}[scale=0.7]
+\shade[left color=darkWhite!90, right color=whiteGray!90] 
+(1.5,-2) to[out=15,in=170] (11.2,-1.8) node[above right] {\large $\M$} to[out=85, in=-70] (10.2,2.5) to[out=165,in=15] (1,2.2) -- cycle;
+
+\coordinate (p0) at (2.3, -0.8);
+\coordinate (p1) at (9.6, 1);
+\coordinate (p4) at (1.7, 0.6);
+\coordinate (p5) at (9, 2.4);
+
+\draw[red, thick] (p0) to[out=28, in=172] node[below,pos=0.8] {$\gamma_0(t)$} coordinate[pos=0.12] (p2) coordinate[pos=0.65] (p3) (p1);
+\draw[blue, thick] (p4) to[out=28, in=172] node[below,pos=0.9] {$\eta_{\gamma_0}^{t_0,w}(t)$} coordinate[pos=0.14] (p6) coordinate[pos=0.72] (p7) (p5);
+\draw[greenTikz] (p2){}+(0.6, 1) --+ (-1.2, 0.7) --+ (-0.9, -1.05) --+ (1, -0.7) node[right] {$T_{p_0} \M$} -- cycle;
+
+\draw[->, thick] (p2) --+ ({1.1*cos(110)}, {1.1*sin(110)});
+\draw (p2){}+(-0.5, 0.4) node {$w$};
+\draw[->, thick] (p3) --+ ({1.1*cos(98)}, {1.1*sin(98)});
+\draw (p3){}+(-0.9, 0.4) node {$P_{\gamma_0}^{t_0,t}(w)$};
+\draw[red] (p2) node {$\bullet$} node[below] {$p_0$};
+
+\draw[dashed, thick] (p2) to[out=110, in=-80] (p6);
+\draw[dashed, thick] (p3) to[out=98, in=-95] (p7);
+\draw[blue] (p6) node {$\bullet$} node[above=3pt] {$\Exp_{p_0}(w)$};
+\end{tikzpicture}
+\caption{Exp-parallèle d'une courbe différentiable.}
+\end{figure}
+
+\begin{proof}
+	\begin{description}
+		\item[$\bullet$] On commence par appliqué la définition de l'Exp-parallèle aux deux côtés de l'égalité :
+		\begin{equation}
+			\eta_{\gamma_0}^{t_0, w}(t) = \Exp_{\gamma_0(t)} \left( P_{\gamma_0}^{t_0, t}(w) \right) \qquad \quad \eta_{\gamma_0}^{t_0', P_{\gamma_0}^{t_0, t_0'}(w)}(t) = \Exp_{\gamma_0(t)} \left( P_{\gamma_0}^{t_0', t} \circ P_{\gamma_0}^{t_0, t_0'}(w) \right)
+		\end{equation}
+		On pose alors deux champs de vecteurs parallèles à $\gamma_0$, $f$ et $g$ suivant :
+		\begin{equation}
+			f(t) = P_{\gamma_0}^{t_0, t}(w) \qquad \qquad g(t) = P_{\gamma_0}^{t_0', t} \circ P_{\gamma_0}^{t_0, t_0'}(w)
+		\end{equation}
+		On remarque ensuite que $f$ et $g$ sont tous deux solutions d'une même équation à solution unique :
+		\begin{equation}
+			\nabla_{\dot{\gamma_0}} f(t) = \nabla_{\dot{\gamma_0}} g(t) = 0 \qquad \qquad f(t) = g(t) = w
+		\end{equation}
+		Donc $f = g$ ce qui montre le premier point.
+		
+		\item[$\bullet$] On refait de même pour le second point :
+		\begin{equation}
+			\eta_{\gamma_0 \circ \psi}^{\psi^{-1}(t_0), w}(t) = \Exp_{\gamma_0 \circ \psi(t)} \left( P_{\gamma_0 \circ \psi}^{\psi^{-1}(t_0), t}(w) \right) \qquad \quad \eta_{\gamma_0}^{t_0, w} \circ \psi(t) = \Exp_{\gamma_0 \circ \psi(t)} \left( P_{\gamma_0}^{t_0, \psi(t)}(w) \right)
+		\end{equation}
+		On pose à nouveau les deux champs de vecteurs parallèles à $\gamma_0$, $f$ et $g$ suivant :
+		\begin{equation}
+			f(t) = P_{\gamma_0 \circ \psi}^{\psi^{-1}(t_0), t}(w) \qquad \qquad g(t) = P_{\gamma_0}^{t_0, \psi(t)}(w)
+		\end{equation}
+		Par définition on a :
+		\begin{equation}
+			\nabla_{\dot{\gamma_0 \circ \psi}} f(t) = 0 \qquad
+		\end{equation}
+		Pour $g$ il faut utiliser la connexion d'une composition :
+		\begin{equation}
+			\nabla_{\dot{\gamma_0 \circ \psi}} g(t) = \dot{\psi}(t) \left( \nabla_{\dot{\gamma}_0} g \right) \circ \psi(t)
+		\end{equation}
+		Or on sait que $\nabla_{\dot{\gamma}_0} g = 0$, d'où :
+		\begin{equation}
+			\nabla_{\dot{\gamma_0 \circ \psi}} g(t) = 0
+		\end{equation}
+		De plus on a les égalités suivantes :
+		\begin{equation}
+			f \circ \psi^{-1}(t_0) = g \circ \psi^{-1}(t_0) = w
+		\end{equation}
+		Étant solutions de la même équation, $f$ et $g$ sont donc égaux et on en déduit ce point.
+	\end{description}
+	\qed
+\end{proof}
+
+\begin{proposition}
+	Soit $\gamma_0(t) = \Exp_{p_0}((t - t0) v_0)$ la géodésique qui passe au point $p_0$ au temps $t_0$ avec la vitesse $v_0$. Soit la fonction de distorsion temporelle $\phi(t) = \alpha (t - t_0') + t_0$. Alors $\tilde{\gamma} = \gamma \circ \psi$ est la géodésique qui passe par $p_0$ au temps $t_0'$ avec une vitesse $\alpha v_0$.
+\end{proposition}
+
+\begin{proof}
+	Vérifions que $\tilde{\gamma}$ est bien une géodésique :
+	\begin{equation}
+		\nabla_{\dot{\tilde{\gamma}}} \dot{\tilde{\gamma}}(t) = \dot{\psi}(t) \left( \nabla_{\dot{\tilde{\gamma}}} \dot{\gamma} \right) \circ \psi(t) = \dot{\psi}^2(t) \left( \nabla_{\dot{\gamma}} \dot{\gamma} \right) \circ \psi(t) = 0
+	\end{equation}
+	La dernière égalité venant du fait que $\gamma$ est une géodésique. Ensuite en remarquant que $\psi(t_0') = t_0$ on a :
+	\begin{equation}
+		\tilde{\gamma}(t_0') = \gamma(t_0) = p_0 \qquad \dot{\tilde{\gamma}}(t_0') = \dot{\psi}(t_0') \dot{\gamma(t_0)} = \alpha v_0
+	\end{equation}
+	\qed
+\end{proof}
+
+\begin{remarque}
+	\label{rk:ortho_vw}
+	Si on prend une géodésique $\gamma_0$ de vitesse initiale $v_0$ et $w = \alpha v_0$, on obtient :
+	\begin{equation}
+		\eta_{\gamma_0}^{t_0, w}(t) = \Exp_{\gamma_0(t)} \left( \alpha P_{\gamma_0}^{t_0,t}(v_0) \right) = \Exp_{\gamma_0(t)}(\alpha \dot{\gamma_0}(t))) = \gamma_0 \left( (\alpha + 1) t \right)
+	\end{equation}
+	Donc l'Exp parallèle dans la direction de la géodésique revient à une distorsion temporelle. Comme on va utiliser une paire composé d'une translation par Exp-parallélisation et d'une distorsion temporelle dans notre modèle, si on veut assurer l'unicité de cette paire il nous faut choisir une translation orthogonale à $v_0$. C'est à dire :
+	\begin{equation}
+		\label{eq:ortho_vw}
+		g_{p_0}(v_0, w) = 0
+	\end{equation}
+\end{remarque}
+
+\subsection{Modèle à effets mixtes}
+
+Maintenant que nous avons les outils pour, on modélise nos données par :
+\begin{equation}
+	y_{i, j} = \eta_{\gamma_0}^{t_0, w_i} \circ \psi_i(t_{i,j}) + \epsilon_{i,j} \qquad \text{avec } \; \gamma_0(t) = \Exp_{p_0} \left( (t - t_0) v_0 \right)
+\end{equation}
+D'après la remarque précédente \ref{rk:ortho_vw}, on doit avoir l'orthogonalité entre les $w_i$ et $v_0$. On pourra représenter ces vecteurs dans une base $\left( A_k \right)_{1 \leqslant k < d}$ déterminé à l'avance :
+\begin{equation}
+	w_i = A s_i = \sum_{k=1}^{d-1} A_k s_{i,k} \qquad \text{avec } \; g_{p_0}(v_0, A_k) = 0
+\end{equation}
+On prendra une distorsion temporelle affine qui permet au sujet de $i$ (en oubliant la translation) de passer par $p_0$ au temps $t_0 + \tau_i$, avec une vitesse $\alpha_i v_0$ :
+\begin{equation}
+	\psi_i(t) = \alpha_i \left( t - t_0 - \tau_i \right) + t_0
+\end{equation}
+On écrira $\alpha_i = e^{\xi_i}$. Puis toutes ces variables sont modéliser statistiquement par les lois suivantes :
+\begin{equation}
+	\tau_i \sim \mathcal{N}(0, \sigma_\tau^2) \qquad \xi_i \sim \mathcal{N}(0, \sigma_\xi^2) \qquad s_{i,k} \sim \mathcal{N}(0, 1) \qquad \epsilon_{i,j} \sim \mathcal{N}(0, \sigma_\epsilon^2 I_d)
+\end{equation}
