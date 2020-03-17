@@ -7,7 +7,8 @@ def f(x, y):
 
 def inverse_metric(p):
 	invG = torch.empty((2, 2))
-	dx_f, dy_f = torch.autograd.grad(f(p[0], p[1]), p, create_graph=True)[0]
+	pg = p if p.requires_grad else p.clone().requires_grad_(True)
+	dx_f, dy_f = torch.autograd.grad(f(pg[0], pg[1]), pg, create_graph=True)[0]
 	dy_f2 = dy_f**2
 	invG[0, 0] = 1. + dy_f2
 	invG[0, 1] = invG[1, 0] = - dx_f * dy_f
@@ -26,12 +27,12 @@ Z = f(X, Y)
 ax.plot_wireframe(X, Y, Z, linewidth=0.5)
 
 # Data
-n = 8
-ys = torch.randn((n, 2)) * torch.tensor([0.44, 0.36]) + torch.tensor([1.6, 1.1])
+n = 7
+ys = torch.randn((n, 2)) * torch.tensor([0.5, 0.38]) + torch.tensor([1.5, 1])
 zs = f(ys[:,0], ys[:,1])
 ax.scatter(ys[:,0], ys[:,1], zs, color='g', s=32)
 
-gamma = 500
+gamma = 200
 def loss_fun(p, qs, **kargs):
 	cost = 0.0
 	Gp = inverse_metric(p)
@@ -41,15 +42,18 @@ def loss_fun(p, qs, **kargs):
 		cost += gamma * (torch.norm(end - ys[i])**2 + (f(end[0], end[1]) - zs[i])**2)
 	return cost
 
-n_steps = 60
+n_steps = 250
 p0 = ys.mean(0).requires_grad_(True)
 qs0 = (ys - p0.detach()).requires_grad_(True)
 optimizer = torch.optim.Adam([p0, qs0])
-n_points = 25
+n_points = 15
 for i in range(n_steps):
+	if i == n_steps-20:
+		optimizer = torch.optim.Adam([qs0])
+		p0 = p0.detach()
 	ti = time()
 	optimizer.zero_grad()
-	loss = loss_fun(p0, qs0, n_points=n_points+int(0.33*i))
+	loss = loss_fun(p0, qs0, n_points=n_points+int(0.1*i))
 	loss.backward(retain_graph=True)
 	print(f"[{i}] Loss: {loss.detach()} \tp: {p0.detach()} \t", end=" \t")
 	optimizer.step()
@@ -59,6 +63,5 @@ for q in qs0:
 	geod = Riemannian_exponential(p0, q, inverse_metric, 60)[0].detach()
 	z = f(geod[:,0], geod[:,1])
 	ax.plot(geod[:,0], geod[:,1], z, color='orange', linewidth=2.4)
-p0 = p0.detach()
 ax.scatter(p0[0], p0[1], f(p0[0], p0[1]), color='r', s=45)
 pl.show()
